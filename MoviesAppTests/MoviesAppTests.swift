@@ -32,5 +32,63 @@ final class MoviesAppTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
+ 
+    func testFetchMovies() throws {
+        
+        let expectation = XCTestExpectation(description: "Data fetched")
 
+        let service = MockService()
+        let vm = MoviesViewModel(netWorkService: service)
+        vm.fetchPopulerMovies()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssertEqual(vm.movies.count > 0, true)
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 5)
+    }
+    
+    func testFetchMoviesFailure() throws {
+        let expectation = XCTestExpectation(description: "Data fetched")
+
+        let service = MockService()
+        service.success = false
+        let vm = MoviesViewModel(netWorkService: service)
+        vm.fetchPopulerMovies()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            XCTAssertEqual(vm.movies.count == 0, true )
+            expectation.fulfill()
+        }
+
+        wait(for: [expectation], timeout: 5) // Adjust the timeout if needed
+    }
+    
+    func testUseCase() throws {
+        let service = MockService()
+        let usecase = PopulerMoviesUseCase(netWorkSerive: service)
+        usecase.searchMovies() { result in
+            switch result {
+            case .success(let moveis):
+                XCTAssert(moveis.count > 0)
+            case .failure(_):
+                XCTAssert(true)
+            }
+        }
+    }
+    
+    func testUseCaseFailure() throws {
+        let service = MockService()
+        service.success = false
+        let usecase = PopulerMoviesUseCase(netWorkSerive: service)
+        usecase.searchMovies() { result in
+            switch result {
+            case .success(let moveis):
+                XCTAssert(moveis.isEmpty)
+            case .failure(let err):
+                XCTAssertTrue(true, "\(err.hashValue)")
+            }
+        }
+    }
 }
