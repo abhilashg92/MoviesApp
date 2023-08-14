@@ -12,7 +12,8 @@ struct AppConstants {
 }
 
 struct Strings {
-    static let moviesTitle = "Populer Movies"
+    static let moviesTitle = "Movies"
+    static let searchMovies = "Search Movies"
     static let releaseDate = "Released on: "
     static let loadingMovies = "Loading Populer Movies"
 }
@@ -23,7 +24,9 @@ struct APIUrl {
     static let apiKey = "?api_key="
     static let thumbnailBase = "https://image.tmdb.org/t/p/w500"
     static let populer = "/popular"
-    
+    static let prarmeterQuery = "&query="
+    static let search = "/search"
+
     func getPopulerMoviesUrl() -> String {
         return APIUrl.baseUrl + APIUrl.movie + APIUrl.populer + APIUrl.apiKey + AppConstants.apiKey
     }
@@ -31,11 +34,15 @@ struct APIUrl {
     func getMovieDetialsUrl() -> String {
         return APIUrl.baseUrl + APIUrl.movie
     }
+    
+    func getSearchMovieUrl() -> String {
+        return APIUrl.baseUrl + APIUrl.search + APIUrl.movie + APIUrl.apiKey + AppConstants.apiKey + APIUrl.prarmeterQuery
+    }
 }
 
-enum MError: Error {
-    case parsingError
-    case unexpectedError
-    case unAutherized
+enum MError: String, Error {
+    case parsingError = "Something went wrong please try again leter."
+    case unexpectedError = "Something went wrong please try again leter"
+    case unAutherized = "You are not authorized to make this request."
 }
 

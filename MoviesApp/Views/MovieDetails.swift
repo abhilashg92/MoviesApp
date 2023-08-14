@@ -25,7 +25,6 @@ struct MovieDetailsView: View {
                     .background(Color.gray)
                     .frame(height: geo.size.height * 0.75)
                     let row = GridItem(.fixed(50), spacing: 5, alignment: .center)
-
                     ScrollView(.horizontal) {
                         LazyHGrid(rows: [row]) {
                             ForEach(viewModel.movie?.gernes ?? [], id: \.self) { gerne in
@@ -46,6 +45,9 @@ struct MovieDetailsView: View {
                     }
                 }
                 .padding(20)
+                if viewModel.movie?.gernes?.isEmpty ?? true {
+                    Text(MError.parsingError.rawValue)
+                }
             }
             .onAppear {
                 viewModel.getMovieDetails(id: movie.id ?? 0)

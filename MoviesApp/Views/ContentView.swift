@@ -26,10 +26,16 @@ struct ContentView: View {
                 }
                 .navigationTitle(Strings.moviesTitle)
             }
+            .searchable(text: $viewModel.searchText)
+            .autocorrectionDisabled()
+            .onSubmit(of: .search, viewModel.fetchMovies)
+            .onChange(of: viewModel.searchText) { newValue in
+                viewModel.fetchMovies()
+            }
             .onAppear {
                 viewModel.fetchPopulerMovies()
             }
-            if viewModel.movies.isEmpty{
+            if viewModel.movies.isEmpty {
                 Text(viewModel.errorText)
                     .font(.title3)
                     .padding([.leading, .trailing])

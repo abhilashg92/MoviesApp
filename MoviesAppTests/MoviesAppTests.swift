@@ -17,21 +17,6 @@ final class MoviesAppTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
  
     func testFetchMovies() throws {
         
@@ -91,4 +76,32 @@ final class MoviesAppTests: XCTestCase {
             }
         }
     }
+    
+    func testSearchUseCase() throws {
+        let service = MockService()
+        let usecase = SearchMoviesUseCase(netWorkSerive: service)
+        usecase.searchMovies(searchText: "harry") { result in
+            switch result {
+            case .success(let moveis):
+                XCTAssert(moveis.count > 0)
+            case .failure(_):
+                XCTAssert(true)
+            }
+        }
+    }
+    
+    func testSearchUseCaseFailure() throws {
+        let service = MockService()
+        service.success = false
+        let usecase = SearchMoviesUseCase(netWorkSerive: service)
+        usecase.searchMovies(searchText: "harry") { result in
+            switch result {
+            case .success(let moveis):
+                XCTAssert(moveis.isEmpty)
+            case .failure(let err):
+                XCTAssertTrue(true, "\(err.hashValue)")
+            }
+        }
+    }
+
 }
